@@ -7,6 +7,10 @@ $region = isset($_POST['region']) ? $_POST['region'] : "";
 $indepyear_min = isset($_POST['indepyear_min']) ? $_POST['indepyear_min'] : 0;
 $indepyear_max = isset($_POST['indepyear_max']) ? $_POST['indepyear_max'] : 0;
 $submit = isset($_POST['index_max']) ? $_POST['index_max'] : "";
+$continent = isset($_POST['continent']) ? $_POST['continent'] : "";
+$surfacearea_min = isset($_POST['surfacearea_min']) ? $_POST['surfacearea_min'] : 0;
+$surfacearea_max = isset($_POST['surfacearea_max']) ? $_POST['surfacearea_max'] : 0;
+
 
 
 /* 参考演算子 = if (isset($_POST['submit'])) {
@@ -44,8 +48,8 @@ $query = "SELECT Code, Name, Continent, Region, IndepYear, SurfaceArea  FROM Cou
     if($region !== ""){
         $wheres[] = "Region LIKE '%{$region}%'";
     }
-    if($region !== ""){
-        $wheres [] = "Continent = '{$region}'";
+    if($continent !== ""){
+        $wheres [] = "Continent = '{$continent}'";
     }
 
     if(!empty($indepyear_min) && !empty($indepyear_max)){
@@ -55,33 +59,19 @@ $query = "SELECT Code, Name, Continent, Region, IndepYear, SurfaceArea  FROM Cou
     }else if(!empty($indepyear_max)){
         $wheres[] = "IndepYear <= {$indepyear_max}";
     }
+
+    if(!empty($surfacearea_min) && !empty($surfacearea_max)){
+        $wheres[] = "SurfaceArea BETWEEN {$surfacearea_min} AND {$surfacearea_max}";
+    }else if(!empty($surfacearea_min)){
+        $wheres[] = "SurfaceArea >= {$surfacearea_min}";
+    }else if(!empty($surfacearea_max)){
+        $wheres[] = "SurfaceArea <= {$surfacearea_max}";
+    }
     
 
     if(!empty($wheres)){
         $whires = implode(' AND ' , $wheres );
         $query = "SELECT Code, Name, Continent, Region, IndepYear, SurfaceArea  FROM Country WHERE {$whires} ORDER BY Code LIMIT 30";
-    }
-    if(!empty($wheres)){
-        $wheres = implode(' AND ' , $wheres);
-        $query = "SELECT Code, Name, Continent, Region, IndepYear, SurfaceArea  FROM Country WHERE Name LIKE '%{$name}%' ORDER BY Code LIMIT 30";
-    }
-    if(!empty($region)){
-        $wheres = implode(' AND ' , $wheres);
-        $query = "SELECT Code, Name, Continent, Region, IndepYear, SurfaceArea  FROM Country WHERE Region LIKE '%{$region}%' ORDER BY Code LIMIT 30";
-    }
-    if(!empty($region)){
-        $wheres = implode(' AND ' , $wheres);
-        $query = "SELECT Code, Name, Continent, Region, IndepYear, SurfaceArea  FROM Country WHERE Continent = '{$region}' ORDER BY Code LIMIT 30";
-    }
-    if(!empty($indepyear_min) && !empty($indepyear_max)){
-        $wheres = implode(' AND ' , $wheres);
-        $query = "SELECT Code, Name, Continent, Region, IndepYear, SurfaceArea  FROM Country WHERE IndepYear BETWEEN {$indepyear_min} AND {$indepyear_max} ORDER BY Code LIMIT 30";
-    }else if(!empty($indepyear_min)){
-        $whires = implode(' AND ' , $wheres);
-        $query = "SELECT Code, Name, Continent, Region, IndepYear, SurfaceArea  FROM Country WHERE IndepYear >= {$indepyear_min} ORDER BY Code LIMIT 30";
-    }else if(!empty($indepyear_max)){
-        $whires = implode(' AND ' , $wheres);
-        $query = "SELECT Code, Name, Continent, Region, IndepYear, SurfaceArea  FROM Country WHERE IndepYear <= {$indepyear_max} ORDER BY Code LIMIT 30";
     }
 }
 
@@ -108,21 +98,21 @@ mysqli_close($link);
 <title>Hello,wold</title>
 </head>
 <body>
+    <form class="container" method = "POST" action = "./search-country.php">
     <div class="row mb-3">
      <label for="Continent" class="col-sm-2 col-form-label">Continent</label>
-         <div id="continent" name="continent" value = "<?php echo $index_max; ?>">
-            <select class="form-select" aria-label="Default select example" >
-                <option value=<?php if( $continent === '') echo 'selected'; ?> value="Asia">Asia</option>
-             <option value=<?php if( $continent === '') echo 'selected'; ?> value="Europe">Europe</option>
-             <option value=<?php if( $continent === '') echo 'selected'; ?> value="North America">North America</option>
-             <option value=<?php if( $continent === '') echo 'selected'; ?> value="Africa">Africa</option>
-             <option value=<?php if( $continent === '') echo 'selected'; ?> value="Ocenia">Ocenia</option>
-             <option value=<?php if( $continent === '') echo 'selected'; ?> value="Autarctica">Autarctica</option>
-             <option value=<?php if( $continent === '') echo 'selected'; ?> value="South America">South Ame</option>
+         <div id="continent" value = "<?php echo $continent; ?>">
+            <select class="form-select" name="continent" aria-label="Default select example" >
+                <option <?php if( $continent === '') echo 'selected'; ?> value="Asia">Asia</option>
+                <option <?php if( $continent === '') echo 'selected'; ?> value="Europe">Europe</option>
+                <option <?php if( $continent === '') echo 'selected'; ?> value="North America">North America</option>
+                <option <?php if( $continent === '') echo 'selected'; ?> value="Africa">Africa</option>
+                <option <?php if( $continent === '') echo 'selected'; ?> value="Oceania">Ocenia</option>
+                <option <?php if( $continent === '') echo 'selected'; ?> value="Autarctica">Autarctica</option>
+                <option <?php if( $continent === '') echo 'selected'; ?> value="South America">South Ame</option>
             </select>
          </div>
     </div>
-    <form class="container" method = "POST" action = "./search-country.php">
          <div class="row mb-3">
           <label for="inputEmail3" class="col-sm-2 col-form-label">Name</label>
           <div class="col-sm-10">
